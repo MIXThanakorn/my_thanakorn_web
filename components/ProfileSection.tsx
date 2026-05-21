@@ -30,7 +30,7 @@ const contacts = [
   },
   {
     label: "Facebook",
-    href: "https://facebook.com/thanakorn.thong",
+    href: "https://facebook.com/thanakron.thong",
     display: "Thanakorn Thong",
     icon: Facebook,
   },
