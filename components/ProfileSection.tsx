@@ -12,8 +12,8 @@ import {
 const contacts = [
   {
     label: "Email",
-    href: "mailto:kjn09402@email.com",
-    display: "kjn09402@email.com",
+    href: "mailto:kjn09402@gmail.com",
+    display: "kjn09402@gmail.com",
     icon: Mail,
   },
   {
@@ -30,7 +30,7 @@ const contacts = [
   },
   {
     label: "Facebook",
-    href: "https://facebook.com/thanakorn.thong",
+    href: "https://facebook.com/thanakron.thong",
     display: "Thanakorn Thong",
     icon: Facebook,
   },
@@ -52,7 +52,7 @@ export default function ProfileSection() {
   return (
     <section
       id="profile"
-      className="relative z-10"
+      className="relative overflow-hidden z-10"
       style={{
         paddingTop: "clamp(5.5rem, 14vw, 9rem)",
         paddingBottom: "clamp(3rem, 8vw, 6rem)",
@@ -60,7 +60,11 @@ export default function ProfileSection() {
         paddingRight: "clamp(1.25rem, 6vw, 2.5rem)",
       }}
     >
-      <div className="max-w-5xl mx-auto">
+      {/* Drifting Ambient Background Glow Orbs */}
+      <div className="bg-glow-orb-1" style={{ top: "8%", left: "12%" }} />
+      <div className="bg-glow-orb-2" style={{ bottom: "10%", right: "8%" }} />
+
+      <div className="max-w-5xl mx-auto relative z-10">
         {/* ── Hero Row: stack on mobile, row on sm+ ── */}
         <AnimatedSection>
           <div
@@ -73,7 +77,7 @@ export default function ProfileSection() {
               marginBottom: "clamp(2rem, 5vw, 3.5rem)",
             }}
           >
-            {/* Avatar */}
+            {/* Avatar with Halo effect */}
             <div
               className="avatar-placeholder"
               style={{
@@ -82,6 +86,10 @@ export default function ProfileSection() {
                 flexShrink: 0,
                 overflow: "hidden",
                 padding: 0,
+                borderRadius: "50%",
+                border: "3px solid var(--border)",
+                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
+                transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
               }}
             >
               <Image
@@ -94,7 +102,9 @@ export default function ProfileSection() {
                   height: "100%",
                   objectFit: "cover",
                   display: "block",
+                  transition: "transform 0.5s ease",
                 }}
+                className="hover:scale-110"
               />
             </div>
 
@@ -103,6 +113,12 @@ export default function ProfileSection() {
               className="hero-text"
               style={{ flex: 1, minWidth: 0, width: "100%" }}
             >
+              {/* Pulse Available Badge */}
+              <div className="status-badge">
+                <span className="status-dot animate-pulse"></span>
+                Available for opportunities
+              </div>
+
               <p className="section-label" style={{ textAlign: "left" }}>
                 Portfolio
               </p>
@@ -163,12 +179,12 @@ export default function ProfileSection() {
                 href={href}
                 target={href.startsWith("http") ? "_blank" : undefined}
                 rel="noopener noreferrer"
-                className="contact-link"
+                className={`contact-link contact-link-${label.toLowerCase()}`}
                 style={{ minWidth: 0 }}
               >
                 <Icon
                   size={14}
-                  style={{ color: "var(--accent-soft)", flexShrink: 0 }}
+                  style={{ color: "var(--accent-soft)", flexShrink: 0, transition: "color 0.25s ease" }}
                 />
                 <span
                   style={{
@@ -179,6 +195,7 @@ export default function ProfileSection() {
                     minWidth: "3.2rem",
                     letterSpacing: "0.04em",
                     textTransform: "uppercase",
+                    transition: "color 0.25s ease"
                   }}
                 >
                   {label}
@@ -190,6 +207,7 @@ export default function ProfileSection() {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
+                    transition: "color 0.25s ease"
                   }}
                 >
                   {display}

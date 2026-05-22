@@ -48,45 +48,31 @@ export default function AwardsSection() {
           <div className="section-divider" />
         </AnimatedSection>
 
-        {/* Awards list */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "clamp(0.75rem, 2vw, 1.1rem)",
-          }}
-        >
+        {/* Milestone Awards Timeline Container */}
+        <div className="timeline-container">
+          {/* Vertical Path */}
+          <div className="timeline-line" />
+
           {awards.map((award, i) => {
             const Icon = award.icon;
             return (
               <AnimatedSection
                 key={award.title}
                 delay={(i % 3) as 0 | 1 | 2 | 3}
+                className="timeline-item"
               >
+                {/* Glowing Node */}
+                <div className="timeline-node">
+                  <Icon size={16} />
+                </div>
+
+                {/* Content Card */}
                 <div
                   className="card"
                   style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "flex-start",
-                    gap: "clamp(0.85rem, 3vw, 1.25rem)",
-                    padding: "clamp(1rem, 3vw, 1.5rem)",
+                    padding: "clamp(1.1rem, 3.2vw, 1.65rem)",
                   }}
                 >
-                  {/* Icon */}
-                  <div
-                    className="award-icon-wrap"
-                    style={{
-                      width: "clamp(36px, 8vw, 44px)",
-                      height: "clamp(36px, 8vw, 44px)",
-                      flexShrink: 0,
-                      marginTop: "0.1rem",
-                    }}
-                  >
-                    <Icon size={18} />
-                  </div>
-
-                  {/* Content */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     {/* Title + Year */}
                     <div
@@ -94,15 +80,15 @@ export default function AwardsSection() {
                         display: "flex",
                         flexWrap: "wrap",
                         alignItems: "baseline",
-                        gap: "0.45rem",
-                        marginBottom: "0.2rem",
+                        gap: "0.5rem",
+                        marginBottom: "0.25rem",
                       }}
                     >
                       <h3
                         style={{
                           fontFamily: "Fraunces, Georgia, serif",
                           fontWeight: 400,
-                          fontSize: "clamp(0.92rem, 2.5vw, 1.02rem)",
+                          fontSize: "clamp(0.98rem, 2.5vw, 1.15rem)",
                           color: "var(--text-primary)",
                           letterSpacing: "-0.01em",
                           lineHeight: 1.3,
@@ -112,7 +98,7 @@ export default function AwardsSection() {
                       </h3>
                       <span
                         className="tag"
-                        style={{ fontSize: "0.67rem", flexShrink: 0 }}
+                        style={{ fontSize: "0.68rem", flexShrink: 0 }}
                       >
                         {award.year}
                       </span>
@@ -124,7 +110,7 @@ export default function AwardsSection() {
                         fontSize: "clamp(0.7rem, 1.8vw, 0.78rem)",
                         fontWeight: 600,
                         color: "var(--accent-soft)",
-                        marginBottom: "0.4rem",
+                        marginBottom: "0.45rem",
                         letterSpacing: "0.03em",
                         textTransform: "uppercase",
                       }}
@@ -137,7 +123,7 @@ export default function AwardsSection() {
                       style={{
                         color: "var(--text-muted)",
                         fontSize: "clamp(0.78rem, 1.8vw, 0.85rem)",
-                        lineHeight: 1.78,
+                        lineHeight: 1.8,
                       }}
                     >
                       {award.description}

@@ -1,5 +1,6 @@
+import Image from "next/image";
 import AnimatedSection from "./AnimatedSection";
-import { Github } from "lucide-react";
+import { Github, ArrowUpRight } from "lucide-react";
 
 const projects = [
   {
@@ -13,12 +14,23 @@ const projects = [
   {
     title: "Mahidol University Social Media Mental Health Analyzer",
     description:
-      "A project that analyzes social media data to assess mental health trends among users from X and Instragram. Using Python, data analysis, and machine learning techniques.",
+      "A project that analyzes social media data to assess mental health trends among users from X and Instagram. Using Python, data analysis, and machine learning techniques.",
     tags: ["Python", "Data Analysis", "Machine Learning"],
     github: "https://github.com/Chanachai04/mental-health",
     image: "/project_02.png",
   },
 ];
+
+const getTagClass = (tag: string) => {
+  const t = tag.toLowerCase();
+  if (t.includes("next.js")) return "tag-nextjs";
+  if (t.includes("typescript")) return "tag-typescript";
+  if (t.includes("tailwind")) return "tag-tailwindcss";
+  if (t.includes("supabase")) return "tag-supabase";
+  if (t.includes("python")) return "tag-python";
+  if (t.includes("machine learning") || t.includes("data analysis") || t.includes("ml")) return "tag-ml";
+  return "";
+};
 
 export default function ProjectsSection() {
   return (
@@ -44,9 +56,9 @@ export default function ProjectsSection() {
           style={{
             display: "grid",
             gridTemplateColumns:
-              "repeat(auto-fill, minmax(min(100%, 280px), 1fr))",
-            gap: "clamp(1rem, 3vw, 1.75rem)",
-            alignItems: "start",
+              "repeat(auto-fit, minmax(min(100%, 380px), 1fr))",
+            gap: "clamp(1.25rem, 3.5vw, 2rem)",
+            alignItems: "stretch",
           }}
         >
           {projects.map((project, i) => (
@@ -56,78 +68,93 @@ export default function ProjectsSection() {
               style={{ height: "100%" }}
             >
               <div
-                className="card"
+                className="card group"
                 style={{
                   height: "100%",
                   display: "flex",
                   flexDirection: "column",
-                  padding: "clamp(1rem, 3vw, 1.5rem)",
+                  padding: "clamp(1.1rem, 3.2vw, 1.65rem)",
+                  justifyContent: "space-between",
                 }}
               >
-                {/* Preview placeholder */}
-                <div
-                  style={{
-                    width: "100%",
-                    height: "clamp(130px, 20vw, 165px)",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    marginBottom: "1rem",
-                    flexShrink: 0,
-                    backgroundImage: `url(${project.image})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    backgroundColor: "var(--bg-secondary)",
-                    border: "1px solid var(--border)",
-                  }}
-                />
-
-                {/* Tags */}
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: "0.35rem",
-                    marginBottom: "0.65rem",
-                  }}
-                >
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="tag"
-                      style={{ fontSize: "0.67rem" }}
+                <div>
+                  {/* Browser Mockup Frame */}
+                  <div className="browser-mockup">
+                    <div className="browser-header">
+                      <div className="browser-dot red" />
+                      <div className="browser-dot yellow" />
+                      <div className="browser-dot green" />
+                      <div className="browser-address">
+                        {project.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.dev
+                      </div>
+                    </div>
+                    <div 
+                      className="browser-content" 
+                      style={{ 
+                        width: "100%", 
+                        height: "clamp(140px, 20vw, 175px)", 
+                        position: "relative" 
+                      }}
                     >
-                      {tag}
-                    </span>
-                  ))}
+                      <Image
+                        src={project.image}
+                        alt={project.title}
+                        fill
+                        style={{
+                          objectFit: "cover",
+                          objectPosition: "top",
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Tags */}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "0.4rem",
+                      marginBottom: "0.75rem",
+                    }}
+                  >
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className={`tag ${getTagClass(tag)}`}
+                        style={{ fontSize: "0.68rem" }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Title */}
+                  <h3
+                    style={{
+                      fontFamily: "Fraunces, Georgia, serif",
+                      fontWeight: 400,
+                      fontSize: "clamp(1.05rem, 2.5vw, 1.25rem)",
+                      color: "var(--text-primary)",
+                      marginBottom: "0.55rem",
+                      lineHeight: 1.3,
+                      letterSpacing: "-0.01em",
+                    }}
+                  >
+                    {project.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p
+                    style={{
+                      color: "var(--text-muted)",
+                      fontSize: "clamp(0.78rem, 1.8vw, 0.85rem)",
+                      lineHeight: 1.8,
+                      marginBottom: "1.25rem",
+                    }}
+                  >
+                    {project.description}
+                  </p>
                 </div>
-
-                {/* Title */}
-                <h3
-                  style={{
-                    fontFamily: "Fraunces, Georgia, serif",
-                    fontWeight: 400,
-                    fontSize: "clamp(1rem, 2.5vw, 1.1rem)",
-                    color: "var(--text-primary)",
-                    marginBottom: "0.45rem",
-                    lineHeight: 1.3,
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  {project.title}
-                </h3>
-
-                {/* Description */}
-                <p
-                  style={{
-                    color: "var(--text-muted)",
-                    fontSize: "clamp(0.78rem, 1.8vw, 0.85rem)",
-                    lineHeight: 1.8,
-                    flexGrow: 1,
-                    marginBottom: "1.1rem",
-                  }}
-                >
-                  {project.description}
-                </p>
 
                 {/* Links */}
                 <div
@@ -142,11 +169,18 @@ export default function ProjectsSection() {
                     href={project.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="contact-link"
-                    style={{ fontSize: "0.78rem", padding: "0.42rem 0.85rem" }}
+                    className="contact-link contact-link-github"
+                    style={{ 
+                      fontSize: "0.78rem", 
+                      padding: "0.45rem 1rem",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.45rem"
+                    }}
                   >
                     <Github size={13} />
-                    Code
+                    <span>View Repository</span>
+                    <ArrowUpRight size={12} style={{ opacity: 0.5 }} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                   </a>
                 </div>
               </div>
