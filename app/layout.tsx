@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   },
   title: "Thanakorn Thongpraiwan — Developer Portfolio",
   description:
-    "Portfolio of Thanakorn Thongpraiwan, a Computer Science student and junior developer building web, mobile, and data-driven products.",
+    "Thanakorn's personal digital playground — web, mobile, and data projects built while learning with code.",
   keywords: [
     "Thanakorn Thongpraiwan",
     "developer",
@@ -17,6 +17,18 @@ export const metadata: Metadata = {
     "React Native",
     "Thailand",
   ],
+  openGraph: {
+    title: "Thanakorn — Personal Digital Playground",
+    description:
+      "Web, mobile, and data projects by Thanakorn Thongpraiwan.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Thanakorn — Personal Digital Playground",
+    description:
+      "Web, mobile, and data projects by Thanakorn Thongpraiwan.",
+  },
 };
 
 export default function RootLayout({
