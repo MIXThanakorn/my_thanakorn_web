@@ -6,8 +6,17 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
-  title: "Thanakorn — Portfolio",
-  description: "Personal resume and portfolio",
+  title: "Thanakorn Thongpraiwan — Developer Portfolio",
+  description:
+    "Portfolio of Thanakorn Thongpraiwan, a Computer Science student and junior developer building web, mobile, and data-driven products.",
+  keywords: [
+    "Thanakorn Thongpraiwan",
+    "developer",
+    "portfolio",
+    "Next.js",
+    "React Native",
+    "Thailand",
+  ],
 };
 
 export default function RootLayout({

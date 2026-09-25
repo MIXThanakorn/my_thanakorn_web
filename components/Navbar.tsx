@@ -1,102 +1,61 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 
 const links = [
-  { label: "Profile", href: "#profile" },
-  { label: "Projects", href: "#projects" },
+  { label: "Work", href: "#work" },
+  { label: "About", href: "#about" },
   { label: "Awards", href: "#awards" },
+  { label: "Contact", href: "#contact" },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
-      if (totalScroll > 0) {
-        setScrollProgress((window.scrollY / totalScroll) * 100);
-      }
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
     };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll(); // Initial call
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
   }, []);
 
   return (
-    <nav className="navbar">
-      {/* Scroll Progress Bar */}
-      <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
-      {/* Top bar */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between relative z-20">
-        {/* Logo */}
-        <span
-          style={{
-            fontFamily: "Inter, sans-serif",
-            fontWeight: 600,
-            fontSize: "clamp(0.9rem, 3vw, 1rem)",
-            color: "var(--text-primary)",
-            letterSpacing: "-0.01em",
-          }}
-        >
-          Thanakorn
-          <span style={{ color: "var(--text-muted)", fontWeight: 400 }}>
-            .dev
-          </span>
-        </span>
+    <header className="navbar">
+      <div className="site-shell nav-inner">
+        <a className="brand" href="#top" aria-label="Thanakorn portfolio home">
+          <span className="brand-mark">TT</span>
+          <span>Thanakorn Thongpraiwan</span>
+        </a>
 
-        {/* Desktop links */}
-        <div className="hidden sm:flex items-center gap-6 md:gap-8">
-          {links.map((l) => (
-            <a key={l.href} href={l.href} className="nav-link">
-              {l.label}
+        <nav className="nav-links" aria-label="Main navigation">
+          {links.map((link) => (
+            <a className="nav-link" href={link.href} key={link.href}>
+              {link.label}
             </a>
           ))}
           <ThemeToggle />
-        </div>
-
-        {/* Mobile: toggle + hamburger */}
-        <div className="flex sm:hidden items-center gap-3">
-          <ThemeToggle />
           <button
-            onClick={() => setOpen((v) => !v)}
-            className="theme-toggle"
-            aria-label="Toggle menu"
+            type="button"
+            className="menu-toggle"
+            aria-label={open ? "Close navigation" : "Open navigation"}
+            aria-expanded={open}
+            onClick={() => setOpen((value) => !value)}
           >
             {open ? <X size={18} /> : <Menu size={18} />}
           </button>
-        </div>
+        </nav>
       </div>
 
-      {/* Mobile dropdown */}
-      {open && (
-        <div
-          style={{
-            borderTop: "1px solid var(--border)",
-            background: "var(--nav-bg)",
-            padding: "0.75rem 1.5rem 1rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.75rem",
-          }}
-        >
-          {links.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="nav-link"
-              onClick={() => setOpen(false)}
-              style={{ fontSize: "0.9rem" }}
-            >
-              {l.label}
-            </a>
-          ))}
-        </div>
-      )}
-    </nav>
+      <nav className={`mobile-menu ${open ? "open" : ""}`} aria-label="Mobile navigation">
+        {links.map((link) => (
+          <a className="nav-link" href={link.href} key={link.href} onClick={() => setOpen(false)}>
+            {link.label}
+          </a>
+        ))}
+      </nav>
+    </header>
   );
 }
