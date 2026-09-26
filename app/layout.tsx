@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ThemeProvider } from "@/providers/ThemeProvider";
 
 export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
-  title: "Thanakorn Thongpraiwan — Developer Portfolio",
+  title: "Thanakorn's Digital World — Developer Portfolio",
   description:
-    "Thanakorn's personal digital playground — web, mobile, and data projects built while learning with code.",
+    "Enter Thanakorn's digital world — an interactive developer portfolio of web, mobile, and data projects.",
   keywords: [
     "Thanakorn Thongpraiwan",
     "developer",
@@ -18,16 +17,16 @@ export const metadata: Metadata = {
     "Thailand",
   ],
   openGraph: {
-    title: "Thanakorn — Personal Digital Playground",
+    title: "Thanakorn's Digital World",
     description:
-      "Web, mobile, and data projects by Thanakorn Thongpraiwan.",
+      "An interactive developer portfolio of web, mobile, and data projects.",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Thanakorn — Personal Digital Playground",
+    title: "Thanakorn's Digital World",
     description:
-      "Web, mobile, and data projects by Thanakorn Thongpraiwan.",
+      "An interactive developer portfolio of web, mobile, and data projects.",
   },
 };
 
@@ -37,10 +36,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        <ThemeProvider>{children}</ThemeProvider>
-      </body>
+    <html lang="en">
+      <body>{children}</body>
     </html>
   );
 }
