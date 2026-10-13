@@ -62,6 +62,33 @@ function SectionHeader({ code, eyebrow, title, copy }: { code: string; eyebrow: 
 }
 
 function ProjectArt({ project }: { project: Project }) {
+  if (project.visual === "world") {
+    return (
+      <div className="project-art project-art-world" aria-hidden="true">
+        <svg className="settlement-scene" viewBox="0 0 640 340">
+          <defs><linearGradient id="world-sky" x2="0" y2="1"><stop stopColor="#142e3d" /><stop offset="1" stopColor="#101522" /></linearGradient></defs>
+          <rect width="640" height="340" fill="url(#world-sky)" />
+          <circle cx="465" cy="66" r="27" fill="#d6d5b5" opacity=".7" />
+          <path d="M0 190 85 95 180 193 290 75 407 184 555 100 640 190V340H0Z" fill="#132a30" />
+          <path d="M0 235 95 172 207 255 333 148 470 233 572 175 640 229V340H0Z" fill="#1c3b3b" />
+          <path d="M240 340 322 243 374 207 437 178" stroke="#988265" strokeWidth="25" fill="none" opacity=".5" />
+          {[70,130,188,468,526,586].map((x,i)=><g key={x} transform={`translate(${x} ${200+i%3*26})`}><path d="m0-56-22 48h44ZM0-34-30 51h60Z" fill="#0c2627" /><path d="M-3 8h6v26h-6" fill="#222d29" /></g>)}
+          {[{x:278,y:232},{x:366,y:268},{x:427,y:216}].map(({x,y})=><g key={x} transform={`translate(${x} ${y})`}><path d="M-25-11h50v40h-50" fill="#6b6c5a" /><path d="m-32-10 32-29 32 29Z" fill="#263d3e" /><rect x="-9" y="3" width="12" height="16" fill="#e6bb69" /><path d="M26 29V-4" stroke="#b09258" strokeWidth="2" /></g>)}
+          <path d="M0 294Q180 245 640 297" stroke="#8fbfc5" strokeWidth="35" opacity=".08" fill="none" />
+        </svg>
+        <span className="art-caption">PROCEDURAL WORLD / VISUAL STUDY</span>
+      </div>
+    );
+  }
+  if (project.visual === "network") {
+    return (
+      <div className="project-art project-art-network" aria-hidden="true">
+        <div className="network-address">https:// <span>ideas.into.reality</span><i /></div>
+        <div className="network-stages">{["URL", "DNS", "TLS", "HTTP", "RENDER"].map((stage,index)=><div key={stage}><span>0{index+1}</span><i /><strong>{stage}</strong></div>)}</div>
+        <div className="network-trace"><span>REQUEST → RESPONSE</span><b>200</b><span>EDUCATIONAL SIMULATION</span></div>
+      </div>
+    );
+  }
   if (project.image) {
     return (
       <div className={`project-art project-art-${project.visual}`}>
@@ -88,7 +115,11 @@ export default function GameWorld() {
   const [selectedArchive, setSelectedArchive] = useState<ArchiveItem | null>(null);
   const [selectedEquipment, setSelectedEquipment] = useState(0);
   const [expandedChapter, setExpandedChapter] = useState(3);
+  const [projectFilter, setProjectFilter] = useState<"ALL" | Project["category"]>("ALL");
   const dialogRef = useRef<HTMLDivElement>(null);
+  const navigationRef = useRef<HTMLElement>(null);
+  const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const visibleProjects = projects.filter((project) => projectFilter === "ALL" || project.category === projectFilter);
 
   const closeOverlay = useCallback(() => {
     setSelectedProject(null);
@@ -112,46 +143,68 @@ export default function GameWorld() {
 
   useEffect(() => {
     const overlayOpen = Boolean(selectedProject || selectedArchive || menuOpen);
+    if (!overlayOpen) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = overlayOpen ? "hidden" : "";
     const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Tab") {
+        const container = selectedProject || selectedArchive ? dialogRef.current : navigationRef.current;
+        const controls = Array.from(container?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])') ?? []);
+        if (menuOpen && menuTriggerRef.current) controls.push(menuTriggerRef.current);
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (event.shiftKey && (document.activeElement === first || document.activeElement === container)) {
+          event.preventDefault(); last?.focus();
+        } else if (!event.shiftKey && (document.activeElement === last || document.activeElement === container)) {
+          event.preventDefault(); first?.focus();
+        }
+      }
       if (event.key !== "Escape") return;
       setMenuOpen(false);
       closeOverlay();
     };
     document.addEventListener("keydown", onKeyDown);
-    if (selectedProject || selectedArchive) window.setTimeout(() => dialogRef.current?.focus(), 0);
+    const focusTimer = window.setTimeout(() => {
+      if (selectedProject || selectedArchive) dialogRef.current?.focus();
+      else navigationRef.current?.querySelector<HTMLButtonElement>("nav button")?.focus();
+    }, 0);
     return () => {
-      document.body.style.overflow = "";
+      window.clearTimeout(focusTimer);
+      document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", onKeyDown);
+      previousFocus?.focus({ preventScroll: true });
     };
   }, [closeOverlay, menuOpen, selectedArchive, selectedProject]);
 
   const chooseSection = (id: SectionId) => {
     setMenuOpen(false);
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById(id)?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
   };
 
   return (
     <main className="game-world">
+      <a className="skip-link" href="#projects">Skip to projects</a>
       <div className="world-atmosphere" aria-hidden="true"><i /><i /><i /><i /><i /></div>
       <div className="world-noise" aria-hidden="true" />
 
       <header className="mobile-hud">
         <a className="world-mark" href="#lobby"><span>TT</span><small>DIGITAL WORLD</small></a>
         <div className="mobile-status"><i /> ONLINE</div>
-        <button aria-expanded={menuOpen} aria-label={menuOpen ? "Close world navigation" : "Open world navigation"} onClick={() => setMenuOpen((value) => !value)} type="button">
+        <button ref={menuTriggerRef} aria-controls="world-navigation" aria-expanded={menuOpen} aria-label={menuOpen ? "Close world navigation" : "Open world navigation"} onClick={() => setMenuOpen((value) => !value)} type="button">
           {menuOpen ? <X /> : <Menu />}
         </button>
       </header>
 
-      <aside className={`game-navigation ${menuOpen ? "is-open" : ""}`}>
+      {menuOpen && <button className="navigation-backdrop" aria-label="Close navigation" onClick={() => setMenuOpen(false)} tabIndex={-1} type="button" />}
+      <aside ref={navigationRef} id="world-navigation" className={`game-navigation ${menuOpen ? "is-open" : ""}`}>
         <a className="nav-crest" href="#lobby" onClick={() => setMenuOpen(false)}>
           <span>TT</span>
           <div><strong>THANAKORN</strong><small>DIGITAL WORLD</small></div>
         </a>
         <nav aria-label="World navigation">
           {navigation.map(({ id, label, icon: Icon }, index) => (
-            <button className={active === id ? "is-active" : ""} key={id} onClick={() => chooseSection(id)} type="button">
+            <button aria-current={active === id ? "location" : undefined} className={active === id ? "is-active" : ""} key={id} onClick={() => chooseSection(id)} type="button">
               <span className="nav-index">{String(index + 1).padStart(2, "0")}</span>
               <Icon aria-hidden="true" size={18} />
               <span>{label}</span>
@@ -161,22 +214,23 @@ export default function GameWorld() {
         </nav>
         <div className="nav-system">
           <span><i /> SYSTEM ONLINE</span>
-          <small>BUILD 02.06 / EN</small>
+          <small>WEB · MOBILE · SIMULATION</small>
         </div>
       </aside>
 
       <div className="world-content">
         <section className="lobby section-stage" id="lobby">
-          <div className="lobby-coordinates">WORLD 01 <i /> 13.7563° N / 100.5018° E</div>
+          <div className="lobby-coordinates">WORLD 01 <i /> A PERSONAL SPACE FOR BUILDING</div>
           <div className="lobby-copy">
             <AnimatedSection>
               <p className="ui-kicker">WELCOME TO</p>
               <h1>THANAKORN&apos;S<br /><span>DIGITAL WORLD</span></h1>
-              <p className="lobby-intro">A space where ideas, code, and imagination turn into something real.</p>
+              <p className="lobby-intro">Developer, creator, and explorer.<br />Building web, mobile, and interactive worlds.</p>
               <div className="lobby-actions">
                 <button className="game-button game-button-primary" onClick={() => chooseSection("character")} type="button">START EXPLORING <ArrowRight size={17} /></button>
                 <button className="game-button game-button-ghost" onClick={() => chooseSection("projects")} type="button">VIEW PROJECTS</button>
               </div>
+              <a className="lobby-feature" href="#projects" onClick={(event) => { event.preventDefault(); chooseSection("projects"); }}><span>NEW CHAPTER / 2026</span><strong>Nocthollow & URL Journey</strong><ArrowRight size={17} /></a>
             </AnimatedSection>
           </div>
           <div className="lobby-core"><EnergyCore /></div>
@@ -186,7 +240,7 @@ export default function GameWorld() {
             <strong>THANAKORN</strong><small>DEVELOPER / CREATOR</small>
             <dl>
               <div><dt>CURRENT QUEST</dt><dd>Build something better</dd></div>
-              <div><dt>LATEST UPDATE</dt><dd>World interface V.2</dd></div>
+              <div><dt>LATEST BUILDS</dt><dd>Nocthollow · URL Journey</dd></div>
               <div><dt>STATUS</dt><dd className="status-online"><i /> ONLINE / BUILDING</dd></div>
             </dl>
           </aside>
@@ -218,10 +272,14 @@ export default function GameWorld() {
         </section>
 
         <section className="section-stage projects-section" id="projects">
-          <SectionHeader code="PRJ" eyebrow="QUEST SELECTION" title="PROJECT ARCHIVE" copy="Four builds collected from the current chapter. Select one to inspect its system data." />
+          <SectionHeader code="PRJ" eyebrow="QUEST SELECTION" title="PROJECT ARCHIVE" copy="Web, mobile, data, and simulated worlds. Select a build to explore how it works." />
+          <div className="project-toolbar">
+            <div className="project-filters" aria-label="Filter projects">{(["ALL", "GAME", "WEB", "MOBILE", "DATA"] as const).map((category)=><button aria-pressed={projectFilter === category} key={category} onClick={()=>setProjectFilter(category)} type="button">{category}<span>{category === "ALL" ? projects.length : projects.filter(p=>p.category===category).length}</span></button>)}</div>
+            <span className="project-count" aria-live="polite">{visibleProjects.length} BUILDS IN VIEW</span>
+          </div>
           <div className="project-collection">
-            {projects.map((project, index) => (
-              <AnimatedSection className={`collectible-project project-slot-${index + 1}`} delay={(index % 3) as 0 | 1 | 2} key={project.id}>
+            {visibleProjects.map((project, index) => (
+              <AnimatedSection className={`collectible-project project-slot-${index % 4 + 1}`} delay={(index % 3) as 0 | 1 | 2} key={project.id}>
                 <button aria-label={`Inspect ${project.title}`} onClick={() => setSelectedProject(project)} type="button">
                   <ProjectArt project={project} />
                   <div className="project-rarity"><span>{project.status}</span><i /><i /><i /></div>
@@ -231,6 +289,8 @@ export default function GameWorld() {
               </AnimatedSection>
             ))}
           </div>
+          <a className="lab-entry" href="https://github.com/MIXThanakorn/go-web" target="_blank" rel="noreferrer"><Code2 size={22} /><div><span>BACKEND LAB / RECENT EXPLORATION</span><strong>Go Web Experiments</strong><p>Go HTTP servers, CRUD practice, and MySQL with GORM.</p></div><ExternalLink size={18} /></a>
+          <a className="repository-link" href="https://github.com/MIXThanakorn?tab=repositories" target="_blank" rel="noreferrer"><Github size={18} /> EXPLORE ALL REPOSITORIES <ExternalLink size={15} /></a>
         </section>
 
         <section className="section-stage archive-section" id="archive">
@@ -259,7 +319,7 @@ export default function GameWorld() {
                   <strong>{event.title}</strong>
                   <span className="quest-toggle">{expandedChapter === index ? "ACTIVE" : "VIEW"}</span>
                 </button>
-                <div className="quest-copy"><p>{event.description}</p><span>CHAPTER {event.chapter} / WORLD LOG</span></div>
+                <div className="quest-copy" hidden={expandedChapter !== index}><p>{event.description}</p><span>CHAPTER {event.chapter} / WORLD LOG</span></div>
               </AnimatedSection>
             ))}
           </div>
@@ -330,9 +390,11 @@ export default function GameWorld() {
                 <div className="modal-project-art"><ProjectArt project={selectedProject} /></div>
                 <div className="modal-project-copy">
                   <p className="ui-kicker">PROJECT DATA / {selectedProject.category}</p><h2>{selectedProject.title}</h2><p className="modal-lead">{selectedProject.description}</p>
-                  <div className="modal-facts"><div><span>STATUS</span><strong>{selectedProject.status}</strong></div><div><span>YEAR</span><strong>{selectedProject.year}</strong></div></div>
+                  <div className="modal-facts"><div><span>PROJECT TYPE</span><strong>{selectedProject.status}</strong></div><div><span>{selectedProject.year === "—" ? "YEAR" : "REPOSITORY CREATED"}</span><strong>{selectedProject.year === "—" ? "Not documented" : selectedProject.year}</strong></div></div>
                   <section><span>PROBLEM</span><p>{selectedProject.problem}</p></section><section><span>CONCEPT</span><p>{selectedProject.concept}</p></section>
                   <div className="modal-tech">{selectedProject.technologies.map((item) => <span key={item}>{item}</span>)}</div>
+                  {selectedProject.features && <section className="project-features"><span>WHAT YOU CAN EXPLORE</span><ul>{selectedProject.features.map(feature=><li key={feature}>{feature}</li>)}</ul></section>}
+                  {selectedProject.demo && <a className="game-button game-button-ghost demo-button" href={selectedProject.demo} rel="noreferrer" target="_blank">TRY THE WORLD <ExternalLink size={16} /></a>}
                   <a className="game-button game-button-primary" href={selectedProject.source} rel="noreferrer" target="_blank">OPEN SOURCE <ExternalLink size={16} /></a>
                 </div>
               </>

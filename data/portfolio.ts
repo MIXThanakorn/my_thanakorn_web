@@ -1,7 +1,7 @@
 export type Project = {
   id: string;
   title: string;
-  category: "WEB" | "MOBILE" | "DATA";
+  category: "WEB" | "MOBILE" | "DATA" | "GAME";
   year: string;
   status: string;
   description: string;
@@ -9,11 +9,42 @@ export type Project = {
   concept: string;
   technologies: readonly string[];
   source: string;
+  demo?: string;
+  features?: readonly string[];
   image?: string;
-  visual: "interface" | "runner" | "neural" | "market";
+  visual: "interface" | "runner" | "neural" | "market" | "world" | "network";
 };
 
 export const projects: readonly Project[] = [
+  {
+    id: "nocthollow",
+    title: "Nocthollow",
+    category: "GAME",
+    year: "2026",
+    status: "INTERACTIVE SIMULATION",
+    description: "A procedural dark-fantasy settlement where weather, economy, and NPC routines shape a persistent world.",
+    problem: "Make a simulated settlement feel alive through connected systems and lasting consequences.",
+    concept: "Seeded world generation meets a Canvas map, inspectable inhabitants, and an evolving settlement economy.",
+    technologies: ["Next.js", "TypeScript", "Canvas 2D", "React"],
+    source: "https://github.com/MIXThanakorn/Nocthollow",
+    demo: "https://nocthollow.vercel.app",
+    features: ["Deterministic seeded worlds", "NPC needs, routines, and memories", "Weather, seasons, economy, and settlement policies", "Local save/load and shareable world seeds"],
+    visual: "world",
+  },
+  {
+    id: "url-journey",
+    title: "URL Journey",
+    category: "WEB",
+    year: "2026",
+    status: "LEARNING SIMULATION",
+    description: "An interactive network observatory that explains the journey from URL parsing to browser rendering.",
+    problem: "Make invisible browser and network processes understandable through safe experimentation.",
+    concept: "An educational simulation with step controls, protocol comparisons, failure scenarios, and layered explanations. Network values are simulated—not live traffic.",
+    technologies: ["TypeScript", "React", "Next.js"],
+    source: "https://github.com/MIXThanakorn/URL_Journey",
+    features: ["DNS, TCP/QUIC, TLS, HTTP, and rendering stages", "Pause, replay, and scrub the simulation", "Network profiles, caching, and failure scenarios", "Beginner, Developer, and Deep Dive explanations"],
+    visual: "network",
+  },
   {
     id: "track-your-task",
     title: "Track Your Task",
