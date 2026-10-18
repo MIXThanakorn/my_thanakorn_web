@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
+import { Anton, Geist } from "next/font/google";
 import "./globals.css";
+
+const display = Anton({ weight: "400", subsets: ["latin"], variable: "--font-display", display: "swap" });
+const body = Geist({ subsets: ["latin"], variable: "--font-body", display: "swap" });
 
 export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
-  title: "Thanakorn's Digital World — Developer Portfolio",
+  title: "Thanakorn — Digital Developer",
   description:
-    "Enter Thanakorn's digital world — an interactive developer portfolio of web, mobile, and data projects.",
+    "Thanakorn Thongpraiwan — a developer building thoughtful web apps, mobile experiences, and interactive worlds.",
   keywords: [
     "Thanakorn Thongpraiwan",
     "developer",
@@ -17,14 +21,14 @@ export const metadata: Metadata = {
     "Thailand",
   ],
   openGraph: {
-    title: "Thanakorn's Digital World",
+    title: "Thanakorn — Digital Developer",
     description:
       "An interactive developer portfolio of web, mobile, and data projects.",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Thanakorn's Digital World",
+    title: "Thanakorn — Digital Developer",
     description:
       "An interactive developer portfolio of web, mobile, and data projects.",
   },
@@ -36,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body>{children}</body>
     </html>
   );

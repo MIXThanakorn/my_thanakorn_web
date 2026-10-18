@@ -1,5 +1,5 @@
-import GameWorld from "@/components/GameWorld";
+import EditorialPortfolio from "@/components/EditorialPortfolio";
 
 export default function Home() {
-  return <GameWorld />;
+  return <EditorialPortfolio />;
 }
